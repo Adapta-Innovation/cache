@@ -3,6 +3,7 @@
 This action allows caching dependencies and build outputs to improve workflow execution time.
 
 >Two other actions are available in addition to the primary `cache` action:
+>
 >* [Restore action](./restore/README.md)
 >* [Save action](./save/README.md)
 
@@ -14,13 +15,30 @@ See ["Caching dependencies to speed up workflows"](https://docs.github.com/en/ac
 
 ## What's New
 
+### ⚠️ Important changes
+
+The cache backend service has been rewritten from the ground up for improved performance and reliability. [actions/cache](https://github.com/actions/cache) now integrates with the new cache service (v2) APIs.
+
+The new service will gradually roll out as of **February 1st, 2025**. The legacy service will also be sunset on the same date. Changes in these release are **fully backward compatible**.
+
+**We are deprecating some versions of this action**. We recommend upgrading to version `v4` or `v3` as soon as possible before **February 1st, 2025.** (Upgrade instructions below).
+
+If you are using pinned SHAs, please use the SHAs of versions `v4.2.0` or `v3.4.0`
+
+If you do not upgrade, all workflow runs using any of the deprecated [actions/cache](https://github.com/actions/cache) will fail.
+
+Upgrading to the recommended versions will not break your workflows.
+
+Read more about the change & access the migration guide: [reference to the announcement](https://github.com/actions/cache/discussions/1510).
+
 ### v4
 
+* Integrated with the new cache service (v2) APIs.
 * Updated to node 20
-* Added a `save-always` flag to save the cache even if a prior step fails
 
 ### v3
 
+* Integrated with the new cache service (v2) APIs.
 * Added support for caching in GHES 3.5+.
 * Fixed download issue for files > 2GB during restore.
 * Updated the minimum runner version support from node 12 -> node 16.
@@ -65,9 +83,9 @@ If you are using a `self-hosted` Windows runner, `GNU tar` and `zstd` are requir
 
 ### Outputs
 
-* `cache-hit` - A boolean value to indicate an exact match was found for the key.
-
-    > **Note** `cache-hit` will only be set to `true` when a cache hit occurs for the exact `key` match. For a partial key match via `restore-keys` or a cache miss, it will be set to `false`.
+* `cache-hit` - A string value to indicate an exact match was found for the key.
+  * If there's a cache hit, this will be 'true' or 'false' to indicate if there's an exact match for `key`.
+  * If there's a cache miss, this will be an empty string.
 
 See [Skipping steps based on cache-hit](#skipping-steps-based-on-cache-hit) for info on using this output
 
@@ -158,6 +176,7 @@ Every programming language and framework has its own way of caching.
 
 See [Examples](examples.md) for a list of `actions/cache` implementations for use with:
 
+* [Bun](./examples.md#bun)
 * [C# - NuGet](./examples.md#c---nuget)
 * [Clojure - Lein Deps](./examples.md#clojure---lein-deps)
 * [D - DUB](./examples.md#d---dub)
